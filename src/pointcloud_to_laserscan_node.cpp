@@ -60,6 +60,7 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
 {
   target_frame_ = this->declare_parameter("target_frame", "");
   tolerance_ = this->declare_parameter("transform_tolerance", 0.01);
+  qos_ = this->declare_parameter("qos", "");
   // TODO(hidmic): adjust default input queue size based on actual concurrency levels
   // achievable by the associated executor
   input_queue_size_ = this->declare_parameter(
@@ -74,8 +75,24 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
   range_max_ = this->declare_parameter("range_max", std::numeric_limits<double>::max());
   inf_epsilon_ = this->declare_parameter("inf_epsilon", 1.0);
   use_inf_ = this->declare_parameter("use_inf", true);
+  this->get_parameter("use_sim_time", use_sim_time_);
+  if (use_sim_time_)
+  {
+      RCLCPP_WARN(this->get_logger(), "Using sim time");
+      this->set_parameter(rclcpp::Parameter("use_sim_time", true));
+  }
+    // Determine QoS based on qos_ string
+    rclcpp::QoS qos_profile(10); // 10 is just an example size for the history depth
+    if (qos_ == "reliable") {
+        qos_profile.reliable();
+    } else if (qos_ == "best_effort") {
+        qos_profile.best_effort();
+    } else {
+        RCLCPP_WARN(this->get_logger(), "QoS not given, topic will use the default QoS profile");
+        qos_profile = rclcpp::SensorDataQoS(); // Default QoS for sensor data
+    }
 
-  pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", rclcpp::SensorDataQoS());
+    pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", qos_profile);
 
   using std::placeholders::_1;
   // if pointcloud target frame specified, we need to filter by transform availability
@@ -141,6 +158,7 @@ void PointCloudToLaserScanNode::cloudCallback(
   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
   scan_msg->header = cloud_msg->header;
   if (!target_frame_.empty()) {
+    scan_msg->header.stamp = this->now();
     scan_msg->header.frame_id = target_frame_;
   }
 
