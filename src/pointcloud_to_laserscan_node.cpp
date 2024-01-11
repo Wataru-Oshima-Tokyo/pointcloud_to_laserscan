@@ -75,6 +75,10 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
   range_max_ = this->declare_parameter("range_max", std::numeric_limits<double>::max());
   inf_epsilon_ = this->declare_parameter("inf_epsilon", 1.0);
   use_inf_ = this->declare_parameter("use_inf", true);
+  double scan_delay_ = this->declare_parameter("scan_delay", 0.01);
+  // Convert seconds to nanoseconds
+  delay_nano_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::duration<double>(scan_delay_));
   this->get_parameter("use_sim_time", use_sim_time_);
   if (use_sim_time_)
   {
@@ -158,7 +162,9 @@ void PointCloudToLaserScanNode::cloudCallback(
   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
   scan_msg->header = cloud_msg->header;
   if (!target_frame_.empty()) {
-    scan_msg->header.stamp = this->now();
+    rclcpp::Duration delay(delay_nano_); // Delay in seconds
+    rclcpp::Time delayed_time = this->now() + delay;
+    scan_msg->header.stamp = delayed_time;
     scan_msg->header.frame_id = target_frame_;
   }
 
