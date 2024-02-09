@@ -49,6 +49,11 @@ def generate_launch_description():
             parameters=[{'target_topic': "scan"}]    
     )
 
+    livox_transform_node = Node(
+        package='pointcloud_handler',
+        executable='livox_transform',
+        name='livox_transform_node' 
+    )
 
     return LaunchDescription([
         min_height_for_move_arg,
@@ -56,16 +61,16 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='velodyne_to_cloud',
+            name='livox_frame_to_laser_link',
             arguments=['0', '0', '0', '0', '0', '0', '1', 'livox_frame', 'laser_link']
         ),
         Node(
             package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
-            remappings=[('cloud_in', '/livox2dlio'),
+            remappings=[('cloud_in', '/livox_normal'),
                         ('scan', '/scan')],
             parameters=[{
-                'target_frame': 'laser_link',
-                'transform_tolerance': 0.01,
+                # 'target_frame': 'laser_link',
+                # 'transform_tolerance': 0.01,
                 'min_height': 0.5,
                 'max_height': 1.0,
                 'angle_min': -math.pi,
@@ -107,7 +112,7 @@ def generate_launch_description():
         # ),
         Node(
             package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
-            remappings=[('cloud_in', '/livox2dlio'),
+            remappings=[('cloud_in', '/livox_normal'),
                         ('scan', '/scan_for_move')],
             parameters=[{
                 'target_frame': 'laser_link',
@@ -131,6 +136,6 @@ def generate_launch_description():
         ),
         fake_scan_move,
         fake_scan,
-        # occupied_cell_node,
+        livox_transform_node
 
     ])

@@ -35,12 +35,12 @@ def generate_launch_description():
 
     theta_min_rad = theta_min_deg * math.pi / 180
     theta_max_rad = theta_max_deg * math.pi / 180
-    # fake_scan_move = Node(
-    #     package='fake_frame',
-    #     executable='fake_scan',
-    #     name='fake_utliadr_scan',
-    #         parameters=[{'target_topic': "utlidar_scan_for_move"}]    
-    # )
+    fake_scan_move = Node(
+        package='fake_frame',
+        executable='fake_scan',
+        name='fake_utliadr_scan',
+            parameters=[{'target_topic': "utlidar_scan_for_move"}]    
+    )
 
     return LaunchDescription([
         min_height_for_move_arg,
@@ -66,5 +66,5 @@ def generate_launch_description():
             }],
             name='utlidar_to_scan'
         ),
-        # fake_scan_move
+        fake_scan_move
     ])
