@@ -56,8 +56,14 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='velodyne_to_cloud',
+            name='hesai_to_laser',
             arguments=['0', '0', '0', '0', '0', '-1.1', '1', 'hesai_lidar', 'laser_link']
+        ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='laser_to_fake_laser',
+            arguments=['0', '0', '0', '0', '0', '0', '1', 'laser_link', 'fake_laser_link']
         ),
         Node(
             package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
