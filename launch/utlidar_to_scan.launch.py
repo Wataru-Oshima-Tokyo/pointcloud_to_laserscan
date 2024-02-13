@@ -57,7 +57,7 @@ def generate_launch_description():
                         ('scan', '/utlidar_scan_for_move')],
             parameters=[{
                 'min_height': min_height_for_move_,
-                'max_height': 0.5,
+                'max_height': 1.0,
                 'angle_min': -math.pi,
                 'angle_max': math.pi,
                 'angle_increment': 0.0087,  # M_PI/360.0
@@ -66,7 +66,7 @@ def generate_launch_description():
                 'range_max': 5.0,
                 'use_inf': False,
                 'inf_epsilon': 4.0,
-                'qos': "reliable",
+                'qos': "best_effort",
                 'use_sim_time': LaunchConfiguration('use_sim_time'),
                 'scan_delay': 0.01,
             }],
