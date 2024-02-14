@@ -56,6 +56,8 @@ def generate_launch_description():
             remappings=[('cloud_in', '/filtered/utlidar/cloud'),
                         ('scan', '/utlidar_scan_for_move')],
             parameters=[{
+                'target_frame': 'utlidar_lidar',
+                'transform_tolerance': 0.01,
                 'min_height': min_height_for_move_,
                 'max_height': 1.0,
                 'angle_min': -math.pi,
