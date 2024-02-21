@@ -81,7 +81,7 @@ def generate_launch_description():
                 'angle_max': math.pi,
                 'angle_increment': 0.0087,  # M_PI/360.0
                 'scan_time': 0.3333,
-                'range_min': 0.1,
+                'range_min': 0.7,
                 'range_max': 120.0,
                 'use_inf': False,
                 'inf_epsilon': 4.0,
@@ -121,8 +121,8 @@ def generate_launch_description():
                 'transform_tolerance': 0.01,
                 'min_height': min_height_for_move_,
                 'max_height': 3.0,
-                'angle_min': -math.pi,
-                'angle_max': math.pi,
+                'angle_min': -1.2,
+                'angle_max': 1.2,
                 'angle_increment': 0.0087,  # M_PI/360.0
                 'scan_time': 0.3333,
                 'range_min': 0.1,
