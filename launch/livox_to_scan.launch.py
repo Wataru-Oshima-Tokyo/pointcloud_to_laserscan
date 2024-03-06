@@ -62,15 +62,21 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='livox_frame_to_laser_link',
-            arguments=['0', '0', '0', '0', '0', '0', '1', 'livox_frame', 'laser_link']
+            arguments=['0', '0', '0', '0', '-0.08715574', '0', '0.9961947', 'livox_frame', 'laser_link']
+        ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='laser_to_fake_laser',
+            arguments=['0', '0', '0', '0', '0', '0', '1', 'laser_link', 'fake_laser_link']
         ),
         Node(
             package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
             remappings=[('cloud_in', '/livox_normal'),
                         ('scan', '/scan')],
             parameters=[{
-                # 'target_frame': 'laser_link',
-                # 'transform_tolerance': 0.01,
+                'target_frame': 'laser_link',
+                'transform_tolerance': 0.01,
                 'min_height': 0.5,
                 'max_height': 1.0,
                 'angle_min': -math.pi,
